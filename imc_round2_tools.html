@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMC Round 2 Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --text-xs:0.8rem;--text-sm:0.9rem;--text-base:1rem;--text-lg:1.2rem;--text-xl:1.6rem;--text-2xl:2.2rem;
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --font-body:'Space Grotesk','Helvetica Neue',sans-serif;--font-mono:'Space Mono','Courier New',monospace;
+  --transition:180ms cubic-bezier(.16,1,.3,1);
+}
+[data-theme="dark"]{
+  --bg:#0e0f14;--surface:#13151c;--surface-2:#191c26;--surface-3:#1f2330;
+  --border:rgba(255,255,255,.08);--border-focus:#4f8ef5;
+  --text:#e2e4ef;--text-muted:#6e7391;--text-faint:#3d4160;
+  --accent:#4f8ef5;--accent-hover:#3a7ae0;--accent-glow:rgba(79,142,245,.15);
+  --gold:#f5c842;--gold-muted:rgba(245,200,66,.12);
+  --success:#4fca7a;--success-bg:rgba(79,202,122,.1);
+  --danger:#f5604f;--danger-bg:rgba(245,96,79,.1);
+  --warning:#f5a742;--warning-bg:rgba(245,167,66,.1);
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+}
+[data-theme="light"]{
+  --bg:#f0f2f8;--surface:#fff;--surface-2:#f5f7fc;--surface-3:#eceef5;
+  --border:rgba(0,0,0,.09);--border-focus:#2d6dd9;
+  --text:#1a1d2e;--text-muted:#5a5f7a;--text-faint:#b0b4cc;
+  --accent:#2d6dd9;--accent-hover:#1e5bbf;--accent-glow:rgba(45,109,217,.12);
+  --gold:#c49a00;--gold-muted:rgba(196,154,0,.1);
+  --success:#1e7d45;--success-bg:rgba(30,125,69,.08);
+  --danger:#c0392b;--danger-bg:rgba(192,57,43,.08);
+  --warning:#b36b00;--warning-bg:rgba(179,107,0,.08);
+  --shadow:0 4px 24px rgba(0,0,0,.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--text);background:var(--bg);line-height:1.6}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+input,select{font:inherit;color:inherit}
+a,button,[role=button]{transition:color var(--transition),background var(--transition),box-shadow var(--transition),border-color var(--transition)}
+:focus-visible{outline:2px solid var(--border-focus);outline-offset:3px;border-radius:var(--radius-sm)}
+p{max-width:72ch}
+
+.app-header{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--border);padding:var(--space-3) var(--space-6);display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.logo{display:flex;align-items:center;gap:var(--space-3);font-size:var(--text-lg);font-weight:700;letter-spacing:-.02em}
+.logo-badge{background:var(--accent);color:#fff;border-radius:var(--radius-md);padding:var(--space-1) var(--space-2);font-size:var(--text-xs);font-family:var(--font-mono);font-weight:700;letter-spacing:.05em}
+.theme-btn{width:36px;height:36px;border-radius:var(--radius-full);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);background:var(--surface-2)}
+.theme-btn:hover{color:var(--text);background:var(--surface-3)}
+
+.tabs{display:flex;gap:var(--space-1);padding:var(--space-4) var(--space-6) 0;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto}
+.tab-btn{padding:var(--space-2) var(--space-5);border-radius:var(--radius-lg) var(--radius-lg) 0 0;font-size:var(--text-sm);font-weight:600;color:var(--text-muted);border:1px solid transparent;border-bottom:none;white-space:nowrap}
+.tab-btn:hover{color:var(--text);background:var(--surface-2)}
+.tab-btn.active{color:var(--accent);background:var(--bg);border-color:var(--border);border-bottom-color:var(--bg);margin-bottom:-1px}
+
+.tab-panel{display:none;padding:var(--space-8) var(--space-6)}
+.tab-panel.active{display:block}
+.container{max-width:960px;margin:0 auto}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:var(--space-6);box-shadow:var(--shadow);margin-bottom:var(--space-6)}
+.card-title{font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-4);display:flex;align-items:center;gap:var(--space-2)}
+.card-title .icon{color:var(--accent)}
+
+.form-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:var(--space-4);margin-bottom:var(--space-5)}
+.form-group{display:flex;flex-direction:column;gap:var(--space-1)}
+label{font-size:var(--text-sm);font-weight:600;color:var(--text-muted)}
+label .hint{font-weight:400;color:var(--text-faint);margin-left:var(--space-1)}
+input[type=number],input[type=text],select{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);font-size:var(--text-base);color:var(--text);width:100%}
+input[type=number]:focus,select:focus{border-color:var(--border-focus);outline:none;box-shadow:0 0 0 3px var(--accent-glow)}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 12px var(--accent-glow)}
+.btn-secondary{background:var(--surface-2);color:var(--text);border-color:var(--border)}
+.btn-secondary:hover{background:var(--surface-3)}
+
+.result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:var(--space-4);margin-top:var(--space-5)}
+.result-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-4);text-align:center}
+.rc-label{font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:var(--space-1)}
+.rc-value{font-size:var(--text-xl);font-weight:700;font-family:var(--font-mono)}
+.result-card.positive .rc-value{color:var(--success)}
+.result-card.negative .rc-value{color:var(--danger)}
+.result-card.neutral  .rc-value{color:var(--gold)}
+.result-card.accent   .rc-value{color:var(--accent)}
+
+.pnl-bar-wrap{margin-top:var(--space-5)}
+.pnl-bar-label{display:flex;justify-content:space-between;font-size:var(--text-sm);margin-bottom:var(--space-2);color:var(--text-muted)}
+.pnl-bar-track{background:var(--surface-3);border-radius:var(--radius-full);height:12px;overflow:hidden}
+.pnl-bar-fill{height:100%;border-radius:var(--radius-full);background:var(--accent);transition:width .5s cubic-bezier(.16,1,.3,1)}
+.pnl-bar-fill.good{background:var(--success)}
+.pnl-bar-fill.warn{background:var(--warning)}
+.pnl-bar-fill.bad {background:var(--danger)}
+
+.inline-msg{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);font-size:var(--text-sm);margin-top:var(--space-4)}
+.inline-msg.success{background:var(--success-bg);color:var(--success);border:1px solid rgba(79,202,122,.2)}
+.inline-msg.warning{background:var(--warning-bg);color:var(--warning);border:1px solid rgba(245,167,66,.2)}
+.inline-msg.danger {background:var(--danger-bg);color:var(--danger);border:1px solid rgba(245,96,79,.2)}
+.inline-msg.info   {background:var(--accent-glow);color:var(--accent);border:1px solid rgba(79,142,245,.2)}
+
+.table-wrap{overflow-x:auto;margin-top:var(--space-5)}
+table{border-collapse:collapse;width:100%;font-size:var(--text-sm)}
+thead th{background:var(--surface-2);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;font-size:var(--text-xs);padding:var(--space-2) var(--space-4);text-align:right;border-bottom:1px solid var(--border)}
+thead th:first-child{text-align:left}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr.highlight{background:var(--gold-muted)!important}
+tbody td{padding:var(--space-2) var(--space-4);font-family:var(--font-mono);font-size:var(--text-xs);text-align:right}
+tbody td:first-child{font-family:var(--font-body);text-align:left;font-weight:600}
+.td-pos{color:var(--success)}.td-neg{color:var(--danger)}.td-best{color:var(--gold);font-weight:700}
+
+.maf-big{font-size:var(--text-2xl);font-family:var(--font-mono);font-weight:700;color:var(--accent);text-align:center;padding:var(--space-4);background:var(--accent-glow);border-radius:var(--radius-lg);margin:var(--space-4) 0}
+.maf-slider-labels{display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--text-faint);margin-top:var(--space-1)}
+
+.alloc-bars{display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-5)}
+.alloc-bar-row{display:grid;grid-template-columns:100px 1fr 80px;align-items:center;gap:var(--space-3)}
+.alloc-bar-name{font-size:var(--text-sm);font-weight:600}
+.alloc-bar-track{height:10px;background:var(--surface-3);border-radius:var(--radius-full);overflow:hidden}
+.alloc-bar-seg{height:100%;border-radius:var(--radius-full);transition:width .4s cubic-bezier(.16,1,.3,1)}
+.seg-research{background:var(--accent)}.seg-scale{background:var(--gold)}.seg-speed{background:var(--success)}
+.alloc-bar-val{font-family:var(--font-mono);font-size:var(--text-sm);text-align:right}
+
+.scenario-strip{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-5)}
+.scenario-btn{padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);border:1px solid var(--border);font-size:var(--text-xs);font-weight:600;color:var(--text-muted)}
+.scenario-btn:hover{background:var(--surface-2);color:var(--text)}
+
+.section-header{margin-bottom:var(--space-5)}
+.section-header h2{font-size:var(--text-xl);font-weight:700;margin-bottom:var(--space-2)}
+.section-header p{color:var(--text-muted);font-size:var(--text-sm)}
+
+.formula-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-5);font-family:var(--font-mono);font-size:var(--text-sm);color:var(--accent);margin:var(--space-4) 0;text-align:center}
+
+@media(max-width:600px){.app-header{padding:var(--space-3) var(--space-4)}.tab-panel{padding:var(--space-5) var(--space-4)}.form-row{grid-template-columns:1fr}.alloc-bar-row{grid-template-columns:70px 1fr 55px}}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="logo">
+      <rect width="28" height="28" rx="7" fill="#4f8ef5"/>
+      <path d="M7 21L14 7L21 21" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M9.5 16h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>Prosperity&nbsp;4</span>
+    <span class="logo-badge">ROUND 2</span>
+  </div>
+  <button class="theme-btn" data-theme-toggle aria-label="Toggle theme">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="manual">📊 Manual Challenge</button>
+  <button class="tab-btn" data-tab="maf">💰 MAF Bidding</button>
+  <button class="tab-btn" data-tab="grid">🔍 Grid Sweep</button>
+</nav>
+
+<!-- TAB 1: MANUAL -->
+<section class="tab-panel active" id="tab-manual">
+<div class="container">
+  <div class="section-header">
+    <h2>Invest &amp; Expand Calculator</h2>
+    <p>Distribute your 50,000 XIREC budget across Research, Scale, and Speed. Adjust sliders and test Speed rank scenarios.</p>
+  </div>
+  <div class="formula-box">PnL = Research(x) × Scale(y) × Speed(z) − Budget_Used</div>
+
+  <div class="scenario-strip">
+    <button class="scenario-btn" data-scenario="balanced">Balanced</button>
+    <button class="scenario-btn" data-scenario="research-heavy">Research Heavy</button>
+    <button class="scenario-btn" data-scenario="speed-heavy">Speed Push</button>
+    <button class="scenario-btn" data-scenario="scale-heavy">Scale Heavy</button>
+    <button class="scenario-btn" data-scenario="conservative">Conservative</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎛️</span> Your Allocation</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Research <span class="hint" id="r-lbl">43%</span></label>
+        <input type="range" id="r-sl" min="0" max="100" value="43" step="1">
+        <input type="number" id="r-n" min="0" max="100" value="43">
+      </div>
+      <div class="form-group">
+        <label>Scale <span class="hint" id="sc-lbl">32%</span></label>
+        <input type="range" id="sc-sl" min="0" max="100" value="32" step="1">
+        <input type="number" id="sc-n" min="0" max="100" value="32">
+      </div>
+      <div class="form-group">
+        <label>Speed <span class="hint" id="sp-lbl">25%</span></label>
+        <input type="range" id="sp-sl" min="0" max="100" value="25" step="1">
+        <input type="number" id="sp-n" min="0" max="100" value="25">
+      </div>
+    </div>
+    <div id="alloc-warn"></div>
+    <div class="alloc-bars">
+      <div class="alloc-bar-row">
+        <span class="alloc-bar-name" style="color:var(--accent)">Research</span>
+        <div class="alloc-bar-track"><div class="alloc-bar-seg seg-research" id="b-r" style="width:43%"></div></div>
+        <span class="alloc-bar-val" style="color:var(--accent)" id="bv-r">43%</span>
+      </div>
+      <div class="alloc-bar-row">
+        <span class="alloc-bar-name" style="color:var(--gold)">Scale</span>
+        <div class="alloc-bar-track"><div class="alloc-bar-seg seg-scale" id="b-sc" style="width:32%"></div></div>
+        <span class="alloc-bar-val" style="color:var(--gold)" id="bv-sc">32%</span>
+      </div>
+      <div class="alloc-bar-row">
+        <span class="alloc-bar-name" style="color:var(--success)">Speed</span>
+        <div class="alloc-bar-track"><div class="alloc-bar-seg seg-speed" id="b-sp" style="width:25%"></div></div>
+        <span class="alloc-bar-val" style="color:var(--success)" id="bv-sp">25%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚡</span> Results</div>
+    <div class="form-row" style="max-width:360px">
+      <div class="form-group">
+        <label>Speed rank multiplier <span class="hint">(0.1=worst, 0.9=best)</span></label>
+        <select id="sp-rank">
+          <option value="0.1">0.1 – Bottom</option>
+          <option value="0.2">0.2 – Very low</option>
+          <option value="0.3">0.3 – Low</option>
+          <option value="0.4">0.4 – Below avg</option>
+          <option value="0.5" selected>0.5 – Median</option>
+          <option value="0.6">0.6 – Above avg</option>
+          <option value="0.7">0.7 – High</option>
+          <option value="0.8">0.8 – Very high</option>
+          <option value="0.9">0.9 – Top</option>
+        </select>
+      </div>
+    </div>
+    <div class="result-grid" id="m-results"></div>
+    <div class="pnl-bar-wrap">
+      <div class="pnl-bar-label"><span>Total PnL vs 200k goal</span><span id="pnl-lbl-v"></span></div>
+      <div class="pnl-bar-track"><div class="pnl-bar-fill" id="pnl-bar"></div></div>
+    </div>
+    <div id="m-verdict"></div>
+  </div>
+</div>
+</section>
+
+<!-- TAB 2: MAF -->
+<section class="tab-panel" id="tab-maf">
+<div class="container">
+  <div class="section-header">
+    <h2>Market Access Fee (MAF) Calculator</h2>
+    <p>Bid to land in the top 50% of participants and unlock +25% order-book quotes. You only pay if accepted.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📈</span> Your Expected Profits</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Expected base Round 2 PnL <span class="hint">XIRECs</span></label>
+        <input type="number" id="mf-base" value="80000" step="1000">
+      </div>
+      <div class="form-group">
+        <label>Estimated extra PnL from +25% volume <span class="hint">XIRECs</span></label>
+        <input type="number" id="mf-extra" value="12000" step="500">
+      </div>
+      <div class="form-group">
+        <label>Round 1 carry-forward <span class="hint">XIRECs</span></label>
+        <input type="number" id="mf-r1" value="183520" step="1000">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎯</span> Your Bid</div>
+    <div class="form-group" style="max-width:420px;margin-bottom:var(--space-3)">
+      <label>MAF bid amount (drag or type)</label>
+      <input type="range" id="mf-sl" min="0" max="30000" step="1" value="3487">
+      <div class="maf-slider-labels"><span>0</span><span>5k</span><span>10k</span><span>15k</span><span>20k</span><span>25k</span><span>30k</span></div>
+    </div>
+    <div class="maf-big" id="mf-disp">3,487 XIRECs</div>
+    <div class="form-group" style="max-width:200px">
+      <label>Exact bid</label>
+      <input type="number" id="mf-exact" value="3487" step="1">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Analysis</div>
+    <div class="result-grid" id="mf-results"></div>
+    <div id="mf-verdict" style="margin-top:var(--space-5)"></div>
+  </div>
+</div>
+</section>
+
+<!-- TAB 3: GRID SWEEP -->
+<section class="tab-panel" id="tab-grid">
+<div class="container">
+  <div class="section-header">
+    <h2>Allocation Grid Sweep</h2>
+    <p>Search all combinations of Research / Scale / Speed and rank them by net PnL.</p>
+  </div>
+  <div class="card">
+    <div class="form-row" style="max-width:480px">
+      <div class="form-group">
+        <label>Speed multiplier <span class="hint">(assumed rank)</span></label>
+        <select id="g-speed">
+          <option value="0.3">0.3 – Low</option>
+          <option value="0.4">0.4 – Below avg</option>
+          <option value="0.5" selected>0.5 – Median</option>
+          <option value="0.6">0.6 – Above avg</option>
+          <option value="0.7">0.7 – High</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Step size <span class="hint">% between points</span></label>
+        <select id="g-step">
+          <option value="5">5%</option>
+          <option value="10" selected>10%</option>
+          <option value="15">15%</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="run-grid">▶ Run Sweep</button>
+  </div>
+  <div class="card" id="g-card" style="display:none">
+    <div class="card-title"><span class="icon">🏆</span> Top 15 Allocations</div>
+    <p style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-3)">Gold row = best. Positive PnL in green, negative in red.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Rank</th>
+            <th>Research%</th><th>Scale%</th><th>Speed%</th><th>Total%</th>
+            <th>Res. val</th><th>Scale val</th><th>Gross</th><th>Budget used</th><th>Net PnL</th>
+          </tr>
+        </thead>
+        <tbody id="g-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+// Theme toggle
+(function(){
+  const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+  let d=r.getAttribute('data-theme')||'dark';
+  const ic={dark:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',light:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'};
+  t.innerHTML=ic[d];
+  t.addEventListener('click',()=>{d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);t.innerHTML=ic[d]});
+})();
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('tab-'+b.dataset.tab).classList.add('active');
+  });
+});
+
+// Helpers
+const researchVal=x=>x===0?0:200000*Math.log(1+x)/Math.log(101);
+const scaleVal=y=>y*7/100;
+const fmt=n=>n.toLocaleString('en-GB',{maximumFractionDigits:0});
+const fmtD=(n,d)=>n.toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+// ── Manual ──
+const slConfig=[
+  {sl:'r-sl',n:'r-n',lbl:'r-lbl',bar:'b-r',bv:'bv-r'},
+  {sl:'sc-sl',n:'sc-n',lbl:'sc-lbl',bar:'b-sc',bv:'bv-sc'},
+  {sl:'sp-sl',n:'sp-n',lbl:'sp-lbl',bar:'b-sp',bv:'bv-sp'},
+];
+slConfig.forEach(c=>{
+  document.getElementById(c.sl).addEventListener('input',e=>{document.getElementById(c.n).value=e.target.value;refreshManual()});
+  document.getElementById(c.n).addEventListener('input',e=>{document.getElementById(c.sl).value=e.target.value;refreshManual()});
+});
+document.getElementById('sp-rank').addEventListener('change',refreshManual);
+
+function refreshManual(){
+  const vals=slConfig.map(c=>Math.max(0,Math.min(100,parseInt(document.getElementById(c.n).value)||0)));
+  const [r,sc,sp]=vals;
+  const total=r+sc+sp;
+  slConfig.forEach((c,i)=>{
+    document.getElementById(c.lbl).textContent=vals[i]+'%';
+    document.getElementById(c.bar).style.width=vals[i]+'%';
+    document.getElementById(c.bv).textContent=vals[i]+'%';
+  });
+  const warn=document.getElementById('alloc-warn');
+  warn.innerHTML=total>100?`<div class="inline-msg danger">⚠ Total is ${total}% — exceeds 100%. Please reduce.</div>`:'';
+
+  const sm=parseFloat(document.getElementById('sp-rank').value);
+  const rv=researchVal(r),sv=scaleVal(sc);
+  const used=(r+sc+sp)/100*50000;
+  const gross=rv*sv*sm;
+  const pnl=gross-used;
+  const tot=183520+pnl;
+  const sign=pnl>=0?'+':'';
+
+  document.getElementById('m-results').innerHTML=`
+    <div class="result-card accent"><div class="rc-label">Research val</div><div class="rc-value">${fmt(Math.round(rv))}</div></div>
+    <div class="result-card neutral"><div class="rc-label">Scale val</div><div class="rc-value">${fmtD(sv,2)}×</div></div>
+    <div class="result-card neutral"><div class="rc-label">Speed mult</div><div class="rc-value">${sm}</div></div>
+    <div class="result-card ${pnl>=0?'positive':'negative'}"><div class="rc-label">Manual PnL</div><div class="rc-value">${sign}${fmt(Math.round(pnl))}</div></div>
+    <div class="result-card ${tot>=200000?'positive':'negative'}"><div class="rc-label">New Total (w/ R1)</div><div class="rc-value">${fmt(Math.round(tot))}</div></div>
+  `;
+
+  const pct=Math.min(100,Math.max(0,tot/200000*100));
+  const bar=document.getElementById('pnl-bar');
+  bar.style.width=pct+'%';
+  bar.className='pnl-bar-fill '+(tot>=200000?'good':pct>70?'warn':'bad');
+  document.getElementById('pnl-lbl-v').textContent=fmt(Math.round(tot))+' / 200,000';
+
+  const vd=document.getElementById('m-verdict');
+  if(total>100) vd.innerHTML='<div class="inline-msg danger">❌ Total allocation > 100% — invalid.</div>';
+  else if(pnl<0) vd.innerHTML='<div class="inline-msg danger">⚠ Negative manual PnL at this Speed rank. Increase Research or Scale.</div>';
+  else if(tot>=200000) vd.innerHTML='<div class="inline-msg success">✅ Hits 200k goal with manual alone! Algorithmic trading will add more buffer.</div>';
+  else vd.innerHTML=`<div class="inline-msg info">ℹ Need <strong>${fmt(Math.round(200000-tot))} more XIREC</strong> from algorithmic trading.</div>`;
+}
+
+const SCENARIOS={balanced:{r:43,sc:32,sp:25},'research-heavy':{r:55,sc:28,sp:17},'speed-heavy':{r:35,sc:30,sp:35},'scale-heavy':{r:35,sc:45,sp:20},conservative:{r:50,sc:30,sp:20}};
+document.querySelectorAll('.scenario-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const s=SCENARIOS[b.dataset.scenario];
+    if(!s)return;
+    slConfig.forEach((c,i)=>{const v=[s.r,s.sc,s.sp][i];document.getElementById(c.n).value=v;document.getElementById(c.sl).value=v});
+    refreshManual();
+  });
+});
+refreshManual();
+
+// ── MAF ──
+function updateMAF(){
+  const base=parseFloat(document.getElementById('mf-base').value)||0;
+  const extra=parseFloat(document.getElementById('mf-extra').value)||0;
+  const r1=parseFloat(document.getElementById('mf-r1').value)||0;
+  const bid=parseFloat(document.getElementById('mf-exact').value)||0;
+  document.getElementById('mf-sl').value=bid;
+  document.getElementById('mf-disp').textContent=fmt(bid)+' XIRECs';
+  const nwa=r1+base+extra-bid,nwoa=r1+base;
+  document.getElementById('mf-results').innerHTML=`
+    <div class="result-card ${bid<extra?'positive':'negative'}"><div class="rc-label">Bid vs Extra PnL</div><div class="rc-value">${bid<=extra?'✓ OK':'✗ High'}</div></div>
+    <div class="result-card accent"><div class="rc-label">Net (with access)</div><div class="rc-value">${fmt(Math.round(nwa))}</div></div>
+    <div class="result-card neutral"><div class="rc-label">Net (no access)</div><div class="rc-value">${fmt(Math.round(nwoa))}</div></div>
+    <div class="result-card ${nwa>nwoa?'positive':'negative'}"><div class="rc-label">Worth paying?</div><div class="rc-value">${nwa>nwoa?'YES':'NO'}</div></div>
+    <div class="result-card ${nwa>=200000?'positive':'negative'}"><div class="rc-label">Hits 200k goal?</div><div class="rc-value">${nwa>=200000?'Yes ✓':'Not yet'}</div></div>
+  `;
+  const vd=document.getElementById('mf-verdict');
+  if(bid===0) vd.innerHTML='<div class="inline-msg info">ℹ Bid = 0: you skip the auction. No extra access, but you keep all PnL.</div>';
+  else if(bid>extra) vd.innerHTML=`<div class="inline-msg danger">⚠ Overbidding by ${fmt(Math.round(bid-extra))} XIREC. You net LESS than not participating. Lower the bid.</div>`;
+  else if(bid>extra*0.7) vd.innerHTML='<div class="inline-msg warning">⚠ High bid relative to expected gain. Winning access barely covers the cost.</div>';
+  else if(bid<500) vd.innerHTML='<div class="inline-msg warning">⚠ Very low bid — may fall below the median. Consider 1,000–2,000 minimum.</div>';
+  else vd.innerHTML='<div class="inline-msg success">✅ Good risk/reward. Bid is well below expected extra PnL.</div>';
+}
+document.getElementById('mf-sl').addEventListener('input',e=>{document.getElementById('mf-exact').value=e.target.value;updateMAF()});
+document.getElementById('mf-exact').addEventListener('input',updateMAF);
+['mf-base','mf-extra','mf-r1'].forEach(id=>document.getElementById(id).addEventListener('input',updateMAF));
+updateMAF();
+
+// ── Grid sweep ──
+document.getElementById('run-grid').addEventListener('click',()=>{
+  const sm=parseFloat(document.getElementById('g-speed').value);
+  const step=parseInt(document.getElementById('g-step').value);
+  const BUDGET=50000,res=[];
+  for(let r=0;r<=100;r+=step)for(let sc=0;sc<=100-r;sc+=step)for(let sp=0;sp<=100-r-sc;sp+=step){
+    const rv=researchVal(r),sv=scaleVal(sc),gross=rv*sv*sm,used=(r+sc+sp)/100*BUDGET,pnl=gross-used;
+    res.push({r,sc,sp,rv,sv,gross,used,pnl});
+  }
+  res.sort((a,b)=>b.pnl-a.pnl);
+  const top=res.slice(0,15);
+  const tb=document.getElementById('g-tbody');tb.innerHTML='';
+  top.forEach((row,i)=>{
+    const tr=document.createElement('tr');
+    if(i===0)tr.classList.add('highlight');
+    const pc=row.pnl>=0?'td-pos':'td-neg';
+    tr.innerHTML=`<td>${i===0?'🥇':i+1}</td><td>${row.r}%</td><td>${row.sc}%</td><td>${row.sp}%</td><td>${row.r+row.sc+row.sp}%</td><td>${fmt(Math.round(row.rv))}</td><td>${fmtD(row.sv,2)}</td><td>${fmt(Math.round(row.gross))}</td><td>${fmt(Math.round(row.used))}</td><td class="${pc} ${i===0?'td-best':''}">${fmt(Math.round(row.pnl))}</td>`;
+    tb.appendChild(tr);
+  });
+  document.getElementById('g-card').style.display='block';
+  document.getElementById('g-card').scrollIntoView({behavior:'smooth',block:'start'});
+});
+</script>
+</body>
+</html>
