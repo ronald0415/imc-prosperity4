@@ -1,0 +1,120 @@
+════════════════════════════════════════════════════════════════════════
+  CLAUDE STRATEGY BRIEF — IMC Prosperity 4 Round 4
+════════════════════════════════════════════════════════════════════════
+  Paste this file into Claude along with the PNG charts.
+  Claude: read this brief first, then look at charts for confirmation.
+
+── 1. PnL ATTRIBUTION ──────────────────────────────────────────────
+  Total PnL            : +11,059 XIRECs
+  VEV options (all)    : +2,043 XIRECs
+  HYDROGEL_PACK        : +1,019 XIRECs
+  VELVETFRUIT_EXTRACT  : +7,998 XIRECs
+
+  Per-VEV-strike PnL (sorted best→worst):
+    VEV_5200             +8,744  ✅ PROFITABLE
+    VEV_5300             +5,507  ✅ PROFITABLE
+    VEV_6000                 +0  ❌ LOSING
+    VEV_6500                 +0  ❌ LOSING
+    VEV_5100                -91  ❌ LOSING
+    VEV_4500               -148  ❌ LOSING
+    VEV_5000               -160  ❌ LOSING
+    VEV_4000               -163  ❌ LOSING
+    VEV_5500             -5,812  ❌ LOSING
+    VEV_5400             -5,834  ❌ LOSING
+
+── 2. SMILE FIT QUALITY ────────────────────────────────────────────
+  Day 3:  R²=0.977  RMSE=0.0256  n=8394  → GOOD
+
+── 3. STRIKE VERDICTS (scalp / MM / avoid) ────────────────────────
+  Strike        AvgSpread     ACF1    MR?        PnL  Verdict
+  -----------------------------------------------------------------
+  VEV_4000          20.92   -0.374    YES       -163  AVOID — spread too wide to scalp
+  VEV_4500          16.07   -0.318    YES       -148  AVOID — spread too wide to scalp
+  VEV_5000           6.26   -0.150    YES       -160  CAUTION — moderate spread, verify edge
+  VEV_5100           4.39   -0.119    YES        -91  ✅ SCALP — reasonable spread
+  VEV_5200           2.92   -0.143    YES      8,744  ✅ SCALP + MM — tight spread + mean-reversion
+  VEV_5300           2.06   -0.246    YES      5,507  ✅ SCALP + MM — tight spread + mean-reversion
+  VEV_5400           1.37   -0.241    YES     -5,834  ✅ SCALP + MM — tight spread + mean-reversion
+  VEV_5500           1.13   -0.323    YES     -5,812  ✅ SCALP + MM — tight spread + mean-reversion
+  VEV_6000           1.00      nan     no          0  ✅ SCALP + MM — tight spread + mean-reversion
+  VEV_6500           1.00      nan     no          0  ✅ SCALP + MM — tight spread + mean-reversion
+
+── 4. MIN_EDGE THRESHOLD RECOMMENDATION ────────────────────────────
+  Optimal MIN_EDGE (by total PnL)  : 0.1  (PnL=+19,023, n_trades=1516, avg_edge=+2.389)
+  Current MIN_EDGE in trader.py    : CHECK — compare above
+  ⚠️  If current threshold is ABOVE 0.1: you are missing profitable trades
+  ⚠️  If current threshold is BELOW 0.1: you are taking low-quality trades
+
+── 5. MARK SIGNAL RECOMMENDATIONS ─────────────────────────────────
+  (|t-stat| > 2.0 = statistically significant signal)
+  Mark            Product                Side      AvgBps   t-stat     n  Action
+  --------------------------------------------------------------------------------
+  Mark 22         VEV_4000               SELL       +44.5    12.69    14  ✅ STRONG → FADE (do opposite)
+  Mark 22         VEV_4500               SELL       +54.6     8.69    13  ✅ STRONG → FADE (do opposite)
+  Mark 14         VEV_5400               BUY       -295.7    -6.44    35  ✅ STRONG → FADE (do opposite)
+  Mark 14         VEV_5500               BUY       -890.9    -3.81    13  ✅ STRONG → FADE (do opposite)
+  Mark 67         VELVETFRUIT_EXTRACT    BUY         +2.3     3.54     5  ✅ STRONG → TRADE WITH (buy when they buy / sell when they sell)
+  Mark 14         VEV_5400               SELL      +153.0     3.36    38  ✅ STRONG → FADE (do opposite)
+  Mark 22         VEV_5100               SELL       +88.2     3.24     9  ✅ STRONG → FADE (do opposite)
+  Mark 22         VEV_5000               SELL       +61.0     3.11    14  ✅ STRONG → FADE (do opposite)
+  Mark 38         HYDROGEL_PACK          BUY         +1.9     2.58    12  ✅ STRONG → TRADE WITH (buy when they buy / sell when they sell)
+  Mark 14         HYDROGEL_PACK          SELL        +2.4     2.50     7  ✅ STRONG → FADE (do opposite)
+  Mark 14         VEV_5500               SELL      +471.4     2.42    23  ✅ STRONG → FADE (do opposite)
+  Mark 22         HYDROGEL_PACK          BUY         -4.8    -2.36     6  ✅ STRONG → FADE (do opposite)
+  Mark 14         VEV_5300               BUY        -74.6    -2.20    18  ✅ STRONG → FADE (do opposite)
+  Mark 22         VEV_5400               SELL      -103.4    -1.73    14  ~ marginal → TRADE WITH (buy when they buy / sell when they sell)
+  Mark 14         VEV_4000               SELL        +5.6     1.60     5  ~ marginal → FADE (do opposite)
+  Mark 38         VEV_4000               BUY         +5.6     1.60     5  ~ marginal → TRADE WITH (buy when they buy / sell when they sell)
+
+── 6. POSITION UTILISATION ─────────────────────────────────────────
+  HYDROGEL_PACK              avg= 11.9%  at_limit=  0.0%  ⚠️  UNDER-UTILISED — consider larger position sizes
+  VELVETFRUIT_EXTRACT        avg= 67.3%  at_limit= 35.6%  
+  VEV_4000                   avg=  4.7%  at_limit=  0.0%  ⚠️  UNDER-UTILISED — consider larger position sizes
+  VEV_4500                   avg=  4.8%  at_limit=  0.0%  ⚠️  UNDER-UTILISED — consider larger position sizes
+  VEV_5000                   avg=  5.1%  at_limit=  0.0%  ⚠️  UNDER-UTILISED — consider larger position sizes
+  VEV_5100                   avg=  3.1%  at_limit=  0.0%  ⚠️  UNDER-UTILISED — consider larger position sizes
+  VEV_5200                   avg= 59.6%  at_limit= 22.5%  
+  VEV_5300                   avg= 49.3%  at_limit= 10.9%  
+  VEV_5400                   avg= 41.8%  at_limit=  5.1%  
+  VEV_5500                   avg= 16.0%  at_limit=  0.0%  
+
+── 7. IV DEVIATION BIAS TABLE ──────────────────────────────────────
+  (μ = persistent bias; if |μ| > 0.02, update IV_BIAS in trader.py)
+  Strike       Day     μ_residual   σ_residual   n_pts  Suggested IV_BIAS adj
+  -----------------------------------------------------------------
+  K=4000     Day 3       -0.0252       0.1000     127  +0.0252
+  K=4500     Day 3       +0.0684       0.0436     278  -0.0684
+  K=5000     Day 3       -0.0243       0.0112     989  +0.0243
+  K=5100     Day 3       -0.0129       0.0041    1000  no change needed
+  K=5200     Day 3       -0.0021       0.0027    1000  no change needed
+  K=5300     Day 3       +0.0007       0.0015    1000  no change needed
+  K=5400     Day 3       -0.0153       0.0020    1000  +0.0153
+  K=5500     Day 3       -0.0162       0.0041    1000  +0.0162
+  K=6000     Day 3       +0.0294       0.0019    1000  -0.0294
+  K=6500     Day 3       -0.0034       0.0029    1000  no change needed
+
+── 8. RECOMMENDED CODE CHANGES (for Claude to implement) ───────────
+  1. Set MIN_EDGE = 0.1  (current value in trader: compare manually; optimal from threshold sweep)
+  2. Update IV_BIAS constants:
+    VEV_4000: adjust IV_BIAS by +0.0252 (persistent residual μ=-0.0252)
+    VEV_4500: adjust IV_BIAS by -0.0684 (persistent residual μ=+0.0684)
+    VEV_5000: adjust IV_BIAS by +0.0243 (persistent residual μ=-0.0243)
+    VEV_6000: adjust IV_BIAS by -0.0294 (persistent residual μ=+0.0294)
+  3. DISABLE VEV_4000: spread=20.9 (>20) and PnL=-163 — not worth trading
+  4. Add/strengthen Mark signal tracking for:
+    Mark 22: VEV_4000 SELL → avg=+44.5bps  t=12.69
+    Mark 22: VEV_4500 SELL → avg=+54.6bps  t=8.69
+    Mark 14: VEV_5400 BUY → avg=-295.7bps  t=-6.44
+    Mark 14: VEV_5500 BUY → avg=-890.9bps  t=-3.81
+    Mark 67: _EXTRACT BUY → avg=+2.3bps  t=3.54
+    Mark 14: VEV_5400 SELL → avg=+153.0bps  t=3.36
+  5. REDUCE position sizing for VELVETFRUIT_EXTRACT: hitting limit 36% of the time — orders being blocked by exchange
+  5. INCREASE position sizing for VEV_4000: only 5% utilisation — leaving profit on table
+  5. INCREASE position sizing for VEV_5100: only 3% utilisation — leaving profit on table
+  5. INCREASE position sizing for VEV_5000: only 5% utilisation — leaving profit on table
+  5. INCREASE position sizing for HYDROGEL_PACK: only 12% utilisation — leaving profit on table
+  5. INCREASE position sizing for VEV_4500: only 5% utilisation — leaving profit on table
+
+════════════════════════════════════════════════════════════════════════
+  END OF BRIEF — attach all PNG charts from r4_charts/ folder
+════════════════════════════════════════════════════════════════════════

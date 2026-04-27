@@ -1,0 +1,80 @@
+======================================================================
+IMC Prosperity 4 – Round 4 Parameter Report  (XIRECS)
+======================================================================
+
+── DELTA-1 PARAMETERS ──
+  HYDROGEL_PACK
+    Return ACF(1):              -0.1242  ◄ MEAN-REVERT
+    EMA-20 MR threshold (p90):  ±5.18
+    → take_edge (≈40% of p90):  2 XIRECS
+    → halfspread (≈55% of spr): 9 XIRECS
+
+  VELVETFRUIT_EXTRACT
+    Return ACF(1):              -0.1603  ◄ MEAN-REVERT
+    EMA-20 MR threshold (p90):  ±2.59
+    → take_edge (≈40% of p90):  1 XIRECS
+    → halfspread (≈55% of spr): 3 XIRECS
+
+── VEV IV SUMMARY ──
+  VEV_4000: mean=1.031  std=0.171  range=[0.777, 1.522]
+  VEV_4500: mean=0.580  std=0.094  range=[0.452, 0.901]
+  VEV_5000: mean=0.277  std=0.023  range=[0.202, 0.361]
+  VEV_5100: mean=0.271  std=0.020  range=[0.233, 0.335]
+  VEV_5200: mean=0.277  std=0.019  range=[0.244, 0.329]
+  VEV_5300: mean=0.282  std=0.019  range=[0.252, 0.327]
+  VEV_5400: mean=0.264  std=0.022  range=[0.229, 0.313]
+  VEV_5500: mean=0.284  std=0.019  range=[0.248, 0.331]
+  VEV_6000: mean=0.496  std=0.075  range=[0.398, 0.631]
+  VEV_6500: mean=0.750  std=0.111  range=[0.613, 0.931]
+
+── PRICE DEVIATION FROM SMILE (+= overpriced → sell; −= underpriced → buy) ──
+  VEV_4000: mean_dev=-0.263  std=0.297  → NEUTRAL
+  VEV_4500: mean_dev=+0.308  std=0.520  → NEUTRAL
+  VEV_5000: mean_dev=-0.469  std=0.635  → NEUTRAL
+  VEV_5100: mean_dev=-0.206  std=1.063  → NEUTRAL
+  VEV_5200: mean_dev=+1.897  std=1.174  → SELL BIAS
+  VEV_5300: mean_dev=+2.178  std=1.108  → SELL BIAS
+  VEV_5400: mean_dev=-2.491  std=0.745  → BUY BIAS
+  VEV_5500: mean_dev=-0.905  std=0.516  → BUY BIAS
+  VEV_6000: mean_dev=+0.182  std=0.080  → NEUTRAL
+  VEV_6500: mean_dev=-0.062  std=0.048  → NEUTRAL
+
+── SMILE TRADING THRESHOLDS ──
+  Medium signal (p70):  IV_DEV_THRESHOLD = 0.0155
+  High   signal (p85):  IV_DEV_THRESHOLD = 0.0220
+  Recommended:          IV_DEV_THRESHOLD = 0.0155
+  MIN_EDGE:             1.0 XIRECS
+
+── OPTION ACF SCALPING SIGNALS ──
+  VEV_4000: lag-1 ACF = -0.2947 ← STRONG SCALP
+  VEV_5400: lag-1 ACF = -0.2444 ← STRONG SCALP
+  VEV_4500: lag-1 ACF = -0.2342 ← STRONG SCALP
+  VEV_5300: lag-1 ACF = -0.2198 ← STRONG SCALP
+  VEV_5500: lag-1 ACF = -0.1750 ← STRONG SCALP
+  VEV_5200: lag-1 ACF = -0.1240 ← moderate
+  VEV_5000: lag-1 ACF = -0.1039 ← moderate
+  VEV_5100: lag-1 ACF = -0.0998 ← moderate
+  VEV_6000: lag-1 ACF = +0.0000
+  VEV_6500: lag-1 ACF = +0.0000
+
+── TOP MARK SIGNALS (|t| ≥ 2.0, n ≥ 5) ──
+  HYDROGEL_PACK: Mark 14 SELL   avg=+8.1bps  t=43.91  n=507
+  HYDROGEL_PACK: Mark 38 BUY    avg=-8.0bps  t=-42.32  n=515
+  HYDROGEL_PACK: Mark 14 BUY    avg=+8.1bps  t=39.78  n=496
+  HYDROGEL_PACK: Mark 38 SELL   avg=-7.9bps  t=-38.84  n=507
+  VELVETFRUIT_EXTRACT: Mark 55 SELL   avg=-4.8bps  t=-27.82  n=600
+  VELVETFRUIT_EXTRACT: Mark 55 BUY    avg=-4.4bps  t=-25.19  n=598
+  VELVETFRUIT_EXTRACT: Mark 01 BUY    avg=+5.5bps  t=21.09  n=260
+  VELVETFRUIT_EXTRACT: Mark 14 BUY    avg=+4.6bps  t=20.58  n=316
+  VELVETFRUIT_EXTRACT: Mark 01 SELL   avg=+5.1bps  t=19.83  n=244
+  VELVETFRUIT_EXTRACT: Mark 14 SELL   avg=+4.2bps  t=18.20  n=331
+  VELVETFRUIT_EXTRACT: Mark 67 BUY    avg=+2.2bps  t=7.57  n=165
+  VELVETFRUIT_EXTRACT: Mark 49 SELL   avg=-2.2bps  t=-6.02  n=105
+  VELVETFRUIT_EXTRACT: Mark 22 SELL   avg=-1.6bps  t=-4.15  n=101
+
+  INTERPRETATION:
+    avg > 0 and t > 2.0 → following this Mark/side is profitable (copy them)
+    avg < 0 and t < −2.0 → FADE this Mark/side (take opposite side)
+    |t| < 2.0 → not statistically significant, ignore
+
+======================================================================

@@ -1,0 +1,203 @@
+{
+  "products": [
+    "HYDROGEL_PACK",
+    "VELVETFRUIT_EXTRACT",
+    "VEV_4000",
+    "VEV_4500",
+    "VEV_5000",
+    "VEV_5100",
+    "VEV_5200",
+    "VEV_5300",
+    "VEV_5400",
+    "VEV_5500",
+    "VEV_6000",
+    "VEV_6500"
+  ],
+  "total_pnl": 11059.3076171875,
+  "pnl_by_product": {
+    "VELVETFRUIT_EXTRACT": {
+      "final_pnl": 7997.5,
+      "initial_pnl": 0.0,
+      "net_pnl": 7997.5,
+      "peak_pnl": 9870.75,
+      "trough_pnl": -1266.375,
+      "max_drawdown": 4458.0,
+      "sharpe": 1.3261540870195527,
+      "mid_std": 15.718763414253466,
+      "ticks": 1000
+    },
+    "VEV_4000": {
+      "final_pnl": -163.46484375,
+      "initial_pnl": 0.0,
+      "net_pnl": -163.46484375,
+      "peak_pnl": 301.4296875,
+      "trough_pnl": -535.95703125,
+      "max_drawdown": 837.38671875,
+      "sharpe": -0.21939022449637238,
+      "mid_std": 15.817500191633073,
+      "ticks": 1000
+    },
+    "VEV_5100": {
+      "final_pnl": -90.59033203125,
+      "initial_pnl": 0.0,
+      "net_pnl": -90.59033203125,
+      "peak_pnl": 196.5869140625,
+      "trough_pnl": -298.9189453125,
+      "max_drawdown": 495.505859375,
+      "sharpe": -0.22774801857604832,
+      "mid_std": 14.014806984572239,
+      "ticks": 1000
+    },
+    "VEV_5200": {
+      "final_pnl": 8744.197265625,
+      "initial_pnl": 0.0,
+      "net_pnl": 8744.197265625,
+      "peak_pnl": 10316.07421875,
+      "trough_pnl": -1089.763671875,
+      "max_drawdown": 2749.76171875,
+      "sharpe": 1.4987635478893981,
+      "mid_std": 11.19473059046054,
+      "ticks": 1000
+    },
+    "VEV_5000": {
+      "final_pnl": -160.4296875,
+      "initial_pnl": 0.0,
+      "net_pnl": -160.4296875,
+      "peak_pnl": 288.23046875,
+      "trough_pnl": -519.68359375,
+      "max_drawdown": 807.9140625,
+      "sharpe": -0.22377743938228525,
+      "mid_std": 15.285915419437929,
+      "ticks": 1000
+    },
+    "VEV_6000": {
+      "final_pnl": 0.0,
+      "initial_pnl": 0.0,
+      "net_pnl": 0.0,
+      "peak_pnl": 0.0,
+      "trough_pnl": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe": 0.0,
+      "mid_std": 0.0,
+      "ticks": 1000
+    },
+    "VEV_5500": {
+      "final_pnl": -5812.2099609375,
+      "initial_pnl": 0.0,
+      "net_pnl": -5812.2099609375,
+      "peak_pnl": 0.0,
+      "trough_pnl": -5812.2099609375,
+      "max_drawdown": 5812.2099609375,
+      "sharpe": -9.430958005455839,
+      "mid_std": 1.22158176640453,
+      "ticks": 1000
+    },
+    "HYDROGEL_PACK": {
+      "final_pnl": 1018.75,
+      "initial_pnl": 0.0,
+      "net_pnl": 1018.75,
+      "peak_pnl": 2340.0625,
+      "trough_pnl": -136.40625,
+      "max_drawdown": 1346.25,
+      "sharpe": 0.5894119399595303,
+      "mid_std": 14.141920411065568,
+      "ticks": 1000
+    },
+    "VEV_4500": {
+      "final_pnl": -147.80859375,
+      "initial_pnl": 0.0,
+      "net_pnl": -147.80859375,
+      "peak_pnl": 301.4296875,
+      "trough_pnl": -492.884765625,
+      "max_drawdown": 794.314453125,
+      "sharpe": -0.20854920754569173,
+      "mid_std": 15.79857810279362,
+      "ticks": 1000
+    },
+    "VEV_6500": {
+      "final_pnl": 0.0,
+      "initial_pnl": 0.0,
+      "net_pnl": 0.0,
+      "peak_pnl": 0.0,
+      "trough_pnl": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe": 0.0,
+      "mid_std": 0.0,
+      "ticks": 1000
+    },
+    "VEV_5300": {
+      "final_pnl": 5506.95703125,
+      "initial_pnl": 0.0,
+      "net_pnl": 5506.95703125,
+      "peak_pnl": 6432.26953125,
+      "trough_pnl": -733.5771484375,
+      "max_drawdown": 1634.037109375,
+      "sharpe": 1.521238155043821,
+      "mid_std": 6.848028584599768,
+      "ticks": 1000
+    },
+    "VEV_5400": {
+      "final_pnl": -5833.59326171875,
+      "initial_pnl": 0.0,
+      "net_pnl": -5833.59326171875,
+      "peak_pnl": 30.0966796875,
+      "trough_pnl": -5836.3232421875,
+      "max_drawdown": 5866.419921875,
+      "sharpe": -3.5135312817057898,
+      "mid_std": 3.0775228914091195,
+      "ticks": 1000
+    }
+  },
+  "mark_count": 7,
+  "top_marks": [
+    {
+      "id": "Mark 01",
+      "volume": 14786,
+      "role": "MIXED_PATTERN",
+      "direction": "BALANCED",
+      "regularity": -0.49649291220115055
+    },
+    {
+      "id": "Mark 14",
+      "volume": 1253,
+      "role": "LIQUIDITY_TAKER (directional, irregular)",
+      "direction": "NET BUYER",
+      "regularity": -0.33430743586581513
+    },
+    {
+      "id": "Mark 22",
+      "volume": 531,
+      "role": "LIQUIDITY_TAKER (directional, irregular)",
+      "direction": "NET SELLER",
+      "regularity": -1.6852848138123027
+    },
+    {
+      "id": "Mark 55",
+      "volume": 208,
+      "role": "LIQUIDITY_TAKER (directional, irregular)",
+      "direction": "NET SELLER",
+      "regularity": 0.15526665137518736
+    },
+    {
+      "id": "Mark 38",
+      "volume": 152,
+      "role": "MIXED_PATTERN",
+      "direction": "BALANCED",
+      "regularity": 0.06258620821587235
+    },
+    {
+      "id": "Mark 67",
+      "volume": 38,
+      "role": "LIQUIDITY_TAKER (directional, irregular)",
+      "direction": "NET BUYER",
+      "regularity": 0.31742735112522547
+    },
+    {
+      "id": "Mark 49",
+      "volume": 26,
+      "role": "LIQUIDITY_TAKER (directional, irregular)",
+      "direction": "NET SELLER",
+      "regularity": -0.4142135623730949
+    }
+  ]
+}

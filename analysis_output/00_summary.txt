@@ -1,0 +1,97 @@
+======================================================================
+IMC Prosperity 4 – Round 4 Analysis Summary  (XIRECS)
+======================================================================
+
+── DELTA-1 ──
+
+  HYDROGEL_PACK
+    Mean price:        9994.65 XIRECS
+    Std price:         34.6233
+    Return ACF(1):     -0.1242  ◄ MEAN-REVERT
+    Mean spread:       15.73
+    EMA-20 MR thresh:  ±5.18
+
+  VELVETFRUIT_EXTRACT
+    Mean price:        5247.65 XIRECS
+    Std price:         18.0771
+    Return ACF(1):     -0.1603  ◄ MEAN-REVERT
+    Mean spread:       4.98
+    EMA-20 MR thresh:  ±2.59
+
+── VEV IV SUMMARY ──
+  VEV_4000: mean=1.031  std=0.171  range=[0.777, 1.522]
+  VEV_4500: mean=0.580  std=0.094  range=[0.452, 0.901]
+  VEV_5000: mean=0.277  std=0.023  range=[0.202, 0.361]
+  VEV_5100: mean=0.271  std=0.020  range=[0.233, 0.335]
+  VEV_5200: mean=0.277  std=0.019  range=[0.244, 0.329]
+  VEV_5300: mean=0.282  std=0.019  range=[0.252, 0.327]
+  VEV_5400: mean=0.264  std=0.022  range=[0.229, 0.313]
+  VEV_5500: mean=0.284  std=0.019  range=[0.248, 0.331]
+  VEV_6000: mean=0.496  std=0.075  range=[0.398, 0.631]
+  VEV_6500: mean=0.750  std=0.111  range=[0.613, 0.931]
+
+── MARK / TRADER SUMMARY ──
+  Mark 14                 vol=8718
+  Mark 01                 vol=7428
+  Mark 55                 vol=6551
+  Mark 22                 vol=5889
+  Mark 38                 vol=5000
+  Mark 67                 vol=1510
+  Mark 49                 vol=1186
+
+── TOP MARK SIGNALS ──
+  HYDROGEL_PACK:
+    Mark 14         sell   avg=+8.1bps  t=43.91  n=507
+    Mark 38         buy    avg=-8.0bps  t=-42.32  n=515
+    Mark 14         buy    avg=+8.1bps  t=39.78  n=496
+    Mark 38         sell   avg=-7.9bps  t=-38.84  n=507
+    Mark 22         buy    avg=+1.4bps  t=1.47  n=11
+    Mark 22         sell   avg=+0.4bps  t=0.20  n=8
+  VELVETFRUIT_EXTRACT:
+    Mark 55         sell   avg=-4.8bps  t=-27.82  n=600
+    Mark 55         buy    avg=-4.4bps  t=-25.19  n=598
+    Mark 01         buy    avg=+5.5bps  t=21.09  n=260
+    Mark 14         buy    avg=+4.6bps  t=20.58  n=316
+    Mark 01         sell   avg=+5.1bps  t=19.83  n=244
+    Mark 14         sell   avg=+4.2bps  t=18.20  n=331
+    Mark 67         buy    avg=+2.2bps  t=7.57  n=165
+    Mark 49         sell   avg=-2.2bps  t=-6.02  n=105
+
+── OPTION ACF SCALPING SIGNALS ──
+  VEV_4000: lag-1 ACF = -0.2947 ← STRONG SCALP
+  VEV_5400: lag-1 ACF = -0.2444 ← STRONG SCALP
+  VEV_4500: lag-1 ACF = -0.2342 ← STRONG SCALP
+  VEV_5300: lag-1 ACF = -0.2198 ← STRONG SCALP
+  VEV_5500: lag-1 ACF = -0.1750 ← STRONG SCALP
+  VEV_5200: lag-1 ACF = -0.1240 ← moderate
+  VEV_5000: lag-1 ACF = -0.1039 ← moderate
+  VEV_5100: lag-1 ACF = -0.0998 ← moderate
+  VEV_6000: lag-1 ACF = +0.0000
+  VEV_6500: lag-1 ACF = +0.0000
+
+── FILES GENERATED ──
+  00_parameter_report.txt
+  00_summary.txt
+  01_delta1_overview.png
+  02_delta1_ema_deviation.png
+  03_vol_smile.png
+  04_iv_price_deviations.png
+  05_option_autocorr.png
+  06_delta_surface.png
+  07_fair_vs_market.png
+  08_iv_level_trends.png
+  09_mark_volume_heatmap.png
+  10_mark_timing.png
+  11_mark_signals.png
+  12_mark_hydro.png
+  12_mark_velv.png
+  13_spread_summary.png
+  mark_signal_strength.csv
+  mark_volume_summary.csv
+  spread_liquidity_summary.csv
+
+── NEXT STEP ──
+Upload all PNGs + this 00_summary.txt to Claude.
+Ask: 'Here are my Round 4 analysis results – build the final strategy and trader.py'
+
+======================================================================
