@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aether Crystal Options Simulator</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #080c10;
+    --bg-secondary: #0d1117;
+    --bg-card: #111820;
+    --bg-card2: #161d26;
+    --accent-green: #00ff88;
+    --accent-red: #ff3355;
+    --accent-blue: #4da6ff;
+    --accent-yellow: #ffd700;
+    --accent-cyan: #00e5ff;
+    --accent-purple: #b388ff;
+    --text-primary: #e6edf3;
+    --text-muted: #8b949e;
+    --border: #1e2936;
+    --border-bright: #2d3f52;
+    --glow-green: 0 0 20px rgba(0,255,136,0.3);
+    --glow-red: 0 0 20px rgba(255,51,85,0.3);
+    --glow-blue: 0 0 20px rgba(77,166,255,0.3);
+  }
+ 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+ 
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+ 
+  /* ===== HEADER ===== */
+  .header {
+    background: linear-gradient(180deg, #0a1628 0%, var(--bg-primary) 100%);
+    border-bottom: 1px solid var(--border-bright);
+    padding: 24px 32px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-green), var(--accent-blue), transparent);
+    animation: scanline 3s ease-in-out infinite;
+  }
+  @keyframes scanline {
+    0%,100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+ 
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+ 
+  .header-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 30px rgba(0,229,255,0.5);
+    line-height: 1.2;
+  }
+ 
+  .header-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    margin-top: 6px;
+  }
+ 
+  .header-badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+ 
+  .badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+  .badge-price {
+    background: rgba(0,255,136,0.1);
+    border: 1px solid var(--accent-green);
+    color: var(--accent-green);
+  }
+  .badge-vol {
+    background: rgba(255,51,85,0.1);
+    border: 1px solid var(--accent-red);
+    color: var(--accent-red);
+  }
+  .badge-info {
+    background: rgba(77,166,255,0.1);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+  }
+ 
+  .info-btn {
+    background: rgba(77,166,255,0.1);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .info-btn:hover {
+    background: rgba(77,166,255,0.25);
+    box-shadow: var(--glow-blue);
+  }
+ 
+  /* ===== CONTROLS ===== */
+  .controls-bar {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+ 
+  .ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+ 
+  .ctrl-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+ 
+  select, input[type=range], input[type=number] {
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  select:focus, input:focus { border-color: var(--accent-cyan); }
+ 
+  select { cursor: pointer; min-width: 160px; }
+ 
+  input[type=range] {
+    padding: 0;
+    width: 140px;
+    accent-color: var(--accent-cyan);
+    cursor: pointer;
+  }
+ 
+  .sim-count-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    min-width: 50px;
+  }
+ 
+  .run-btn {
+    background: linear-gradient(135deg, #00cc6a, #00ff88);
+    color: #000;
+    border: none;
+    padding: 9px 24px;
+    border-radius: 4px;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    box-shadow: 0 0 15px rgba(0,255,136,0.3);
+  }
+  .run-btn:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(0,255,136,0.5); }
+  .run-btn:active { transform: translateY(0); }
+  .run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+ 
+  .export-btn {
+    background: rgba(77,166,255,0.1);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+    padding: 7px 16px;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .export-btn:hover { background: rgba(77,166,255,0.2); }
+  .export-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+ 
+  .progress-wrap {
+    flex: 1;
+    min-width: 120px;
+    display: none;
+  }
+  .progress-wrap.active { display: block; }
+  .progress-bar-track {
+    background: var(--border);
+    border-radius: 2px;
+    height: 4px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s;
+  }
+  .progress-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    letter-spacing: 1px;
+  }
+ 
+  /* ===== MAIN CONTENT ===== */
+  .main { padding: 24px 32px; }
+ 
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+ 
+  /* ===== CONTRACTS TABLE ===== */
+  .table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+ 
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+ 
+  thead th {
+    background: var(--bg-card2);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-bright);
+    white-space: nowrap;
+  }
+ 
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody tr.row-buy { background: rgba(0,255,136,0.04); }
+  tbody tr.row-sell { background: rgba(255,51,85,0.04); }
+ 
+  tbody td {
+    padding: 9px 12px;
+    font-size: 13px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+ 
+  .opt-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text-primary);
+    font-weight: bold;
+  }
+ 
+  .type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    cursor: help;
+    position: relative;
+  }
+  .type-vanilla { background: rgba(139,148,158,0.15); color: var(--text-muted); border: 1px solid var(--border-bright); }
+  .type-exotic  { background: rgba(179,136,255,0.15); color: var(--accent-purple); border: 1px solid rgba(179,136,255,0.4); }
+  .type-under   { background: rgba(0,229,255,0.1); color: var(--accent-cyan); border: 1px solid rgba(0,229,255,0.4); }
+ 
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    background: #1a2535;
+    border: 1px solid var(--border-bright);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    z-index: 200;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    white-space: normal;
+  }
+  .tooltip-wrap:hover .tooltip-text { visibility: visible; opacity: 1; }
+ 
+  td .bid { color: var(--accent-green); font-family: 'Share Tech Mono', monospace; }
+  td .ask { color: var(--accent-red); font-family: 'Share Tech Mono', monospace; }
+ 
+  .side-select {
+    padding: 5px 8px;
+    min-width: 85px;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+  .side-none  { border-color: var(--border-bright) !important; color: var(--text-muted) !important; }
+  .side-buy   { border-color: var(--accent-green) !important; color: var(--accent-green) !important; background: rgba(0,255,136,0.08) !important; }
+  .side-sell  { border-color: var(--accent-red) !important; color: var(--accent-red) !important; background: rgba(255,51,85,0.08) !important; }
+ 
+  .vol-input {
+    width: 70px;
+    text-align: center;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+ 
+  .exp-pnl {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 90px;
+    text-align: right;
+  }
+  .pnl-pos { color: var(--accent-green); }
+  .pnl-neg { color: var(--accent-red); }
+  .pnl-zero { color: var(--text-muted); }
+ 
+  /* ===== PAYOFF DIAGRAM ===== */
+  .payoff-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  .payoff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .payoff-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+  }
+  #payoffCanvas { width: 100%; height: 140px; }
+ 
+  /* ===== STATS CARDS ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media(max-width:900px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+ 
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--card-accent, var(--accent-cyan));
+    opacity: 0.7;
+  }
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+ 
+  /* ===== CHARTS ===== */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media(max-width:1200px) { .charts-grid { grid-template-columns: 1fr 1fr; } }
+  @media(max-width:800px)  { .charts-grid { grid-template-columns: 1fr; } }
+ 
+  .chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .chart-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .chart-canvas-wrap { position: relative; height: 260px; }
+ 
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    padding: 28px;
+    max-width: 580px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 0 60px rgba(0,229,255,0.15);
+  }
+  .modal-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+  }
+  .modal p { color: var(--text-muted); font-size: 13px; line-height: 1.7; margin-bottom: 12px; }
+  .modal h4 { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--accent-yellow); margin: 16px 0 8px; }
+  .modal code { background: var(--bg-secondary); padding: 2px 6px; border-radius: 3px; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--accent-cyan); }
+  .modal-close {
+    background: rgba(255,51,85,0.1);
+    border: 1px solid var(--accent-red);
+    color: var(--accent-red);
+    padding: 7px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    margin-top: 16px;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,51,85,0.2); }
+ 
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+  .empty-state .icon { font-size: 32px; margin-bottom: 12px; opacity: 0.3; }
+ 
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+ 
+  .glow-text-green { text-shadow: 0 0 10px rgba(0,255,136,0.6); }
+  .glow-text-red   { text-shadow: 0 0 10px rgba(255,51,85,0.6); }
+</style>
+</head>
+<body>
+ 
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-title">⬡ AETHER CRYSTAL OPTIONS SIMULATOR</div>
+      <div class="header-sub">GBM · ZERO DRIFT · DISCRETE GRID · EXPIRY MARK-TO-FAIR</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+      <div class="header-badges">
+        <div class="badge badge-price">S₀ = 50.00</div>
+        <div class="badge badge-vol">σ = 251%</div>
+        <div class="badge badge-info">4 STEPS/DAY</div>
+        <div class="badge badge-info">CONTRACT × 3,000</div>
+      </div>
+      <button class="info-btn" onclick="openModal()">? RULES</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- CONTROLS -->
+<div class="controls-bar">
+  <div class="ctrl-group">
+    <span class="ctrl-label">PRESET:</span>
+    <select id="presetSelect" onchange="applyPreset(this.value)">
+      <option value="chooser_arb">Chooser Arb</option>
+      <option value="bear_put">Bear Put Spread</option>
+      <option value="long_straddle">Long Straddle T+21</option>
+      <option value="ko_spec">KO Speculation</option>
+      <option value="blank">Blank</option>
+      <option value="custom">Custom</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">SIMS:</span>
+    <input type="range" id="simSlider" min="100" max="5000" step="100" value="1000" oninput="document.getElementById('simCount').textContent=this.value">
+    <span class="sim-count-display" id="simCount">1000</span>
+  </div>
+  <button class="run-btn" id="runBtn" onclick="runSimulation()">▶ RUN</button>
+  <button class="export-btn" id="exportBtn" onclick="exportCSV()" disabled>⬇ EXPORT CSV</button>
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">SIMULATING...</div>
+  </div>
+</div>
+ 
+<!-- MAIN -->
+<div class="main">
+ 
+  <!-- CONTRACTS TABLE -->
+  <div class="section-title">AVAILABLE OPTION CONTRACTS</div>
+  <div class="table-wrap">
+    <table id="contractsTable">
+      <thead>
+        <tr>
+          <th>OPTION</th>
+          <th>TYPE</th>
+          <th>EXPIRY</th>
+          <th>BID</th>
+          <th>ASK</th>
+          <th>MAX VOL</th>
+          <th>SIDE</th>
+          <th>VOLUME</th>
+          <th style="text-align:right;">EXP. PnL</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+ 
+  <!-- PAYOFF DIAGRAM -->
+  <div class="payoff-wrap">
+    <div class="payoff-header">
+      <span class="payoff-title">PORTFOLIO PAYOFF AT EXPIRY (ANALYTICAL) — AC PRICE RANGE 5–100</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent-yellow);">LIVE UPDATE</span>
+    </div>
+    <canvas id="payoffCanvas"></canvas>
+  </div>
+ 
+  <!-- STATS -->
+  <div class="section-title">SIMULATION RESULTS</div>
+  <div class="stats-grid">
+    <div class="stat-card" style="--card-accent:var(--accent-green)">
+      <div class="stat-label">EXPECTED PnL</div>
+      <div class="stat-value" id="statMean">—</div>
+      <div class="stat-sub" id="statMeanSub">Run simulation to see results</div>
+    </div>
+    <div class="stat-card" style="--card-accent:var(--accent-yellow)">
+      <div class="stat-label">STD DEVIATION</div>
+      <div class="stat-value" id="statStd">—</div>
+      <div class="stat-sub" id="statStdSub">p5 / p95 percentile</div>
+    </div>
+    <div class="stat-card" style="--card-accent:var(--accent-blue)">
+      <div class="stat-label">SHARPE RATIO</div>
+      <div class="stat-value" id="statSharpe">—</div>
+      <div class="stat-sub" id="statSharpeSub">mean / std dev</div>
+    </div>
+    <div class="stat-card" style="--card-accent:var(--accent-purple)">
+      <div class="stat-label">% PROFITABLE</div>
+      <div class="stat-value" id="statProfit">—</div>
+      <div class="stat-sub" id="statProfitSub">sims with PnL > 0</div>
+    </div>
+  </div>
+ 
+  <!-- CHARTS -->
+  <div class="section-title">ANALYSIS CHARTS</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">PnL DISTRIBUTION HISTOGRAM</div>
+      <div class="chart-canvas-wrap">
+        <div class="empty-state" id="emptyHist"><div class="icon">◈</div>RUN SIMULATION</div>
+        <canvas id="histChart" style="display:none"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">SAMPLE GBM PRICE PATHS (30)</div>
+      <div class="chart-canvas-wrap">
+        <div class="empty-state" id="emptyPaths"><div class="icon">◈</div>RUN SIMULATION</div>
+        <canvas id="pathsChart" style="display:none"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">MEAN PnL BY CONTRACT</div>
+      <div class="chart-canvas-wrap">
+        <div class="empty-state" id="emptyBreak"><div class="icon">◈</div>RUN SIMULATION</div>
+        <canvas id="breakdownChart" style="display:none"></canvas>
+      </div>
+    </div>
+  </div>
+ 
+</div>
+ 
+<!-- INFO MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title">⬡ SIMULATOR RULES & METHODOLOGY</div>
+    <h4>UNDERLYING</h4>
+    <p>Aether Crystal (AC) follows Geometric Brownian Motion with <code>σ=251%</code> annualised volatility and zero risk-neutral drift. Prices evolve on a discrete grid of <code>4 steps/day</code> over <code>252 trading days/year</code>. Each step: <code>S_{t+1} = S_t × exp(−½σ²·dt + σ·√dt·Z)</code> where Z~N(0,1).</p>
+    <h4>CONTRACT TYPES</h4>
+    <p><b style="color:var(--text-primary)">Call/Put:</b> Standard European. Payoff = max(S−K, 0) or max(K−S, 0) at expiry.</p>
+    <p><b style="color:var(--text-primary)">Chooser:</b> At week 2 (T+14, step 56), holder picks whether it becomes a Call or Put based on BS values with remaining time. Then runs 1 more week to T+21.</p>
+    <p><b style="color:var(--text-primary)">Binary Put:</b> Pays <code>10</code> (fixed notional) if S &lt; K at expiry, else 0.</p>
+    <p><b style="color:var(--text-primary)">Knock-Out Put:</b> Behaves like a put UNLESS the price breaches the barrier at any discrete step — then immediately expires worthless.</p>
+    <h4>PnL CALCULATION</h4>
+    <p>Entry at <code>Ask</code> (if buying) or <code>Bid</code> (if selling). PnL = (payoff − entryPrice) × volume × 3000. Marked to fair value (average payoff across 100 simulations) at expiry. Your score = average PnL across all simulations.</p>
+    <h4>TIME CONVENTIONS</h4>
+    <p>1 week = 5 trading days = 20 steps. T+14 = 56 steps. T+21 = 84 steps. Steps per year = 1008.</p>
+    <button class="modal-close" onclick="closeModal()">✕ CLOSE</button>
+  </div>
+</div>
+ 
+<script>
+// === CONSTANTS ===
+const S0 = 50;
+const SIGMA = 2.51;
+const TRADING_DAYS_PER_YEAR = 252;
+const STEPS_PER_DAY = 4;
+const STEPS_PER_YEAR = TRADING_DAYS_PER_YEAR * STEPS_PER_DAY; // 1008
+const DT = 1 / STEPS_PER_YEAR;
+const T14_STEPS = 56;
+const T21_STEPS = 84;
+const CONTRACT_SIZE = 3000;
+const BINARY_NOTIONAL = 10;
+const CHUNK_SIZE = 200;
+ 
+// === CONTRACT DATA ===
+const CONTRACTS = [
+  { id:0,  name:'AC',        type:'Underlying',  strike:null, barrier:null, chooseStep:null, expirySteps:84, bid:49.975, ask:50.025, maxVol:200 },
+  { id:1,  name:'AC_50_P',   type:'Put',         strike:50,   barrier:null, chooseStep:null, expirySteps:84, bid:12,     ask:12.05,  maxVol:50  },
+  { id:2,  name:'AC_50_C',   type:'Call',        strike:50,   barrier:null, chooseStep:null, expirySteps:84, bid:12,     ask:12.05,  maxVol:50  },
+  { id:3,  name:'AC_35_P',   type:'Put',         strike:35,   barrier:null, chooseStep:null, expirySteps:84, bid:4.33,   ask:4.35,   maxVol:50  },
+  { id:4,  name:'AC_40_P',   type:'Put',         strike:40,   barrier:null, chooseStep:null, expirySteps:84, bid:6.5,    ask:6.55,   maxVol:50  },
+  { id:5,  name:'AC_45_P',   type:'Put',         strike:45,   barrier:null, chooseStep:null, expirySteps:84, bid:9.05,   ask:9.1,    maxVol:50  },
+  { id:6,  name:'AC_60_C',   type:'Call',        strike:60,   barrier:null, chooseStep:null, expirySteps:84, bid:8.8,    ask:8.85,   maxVol:50  },
+  { id:7,  name:'AC_50_P_2', type:'Put',         strike:50,   barrier:null, chooseStep:null, expirySteps:56, bid:9.7,    ask:9.75,   maxVol:50  },
+  { id:8,  name:'AC_50_C_2', type:'Call',        strike:50,   barrier:null, chooseStep:null, expirySteps:56, bid:9.7,    ask:9.75,   maxVol:50  },
+  { id:9,  name:'AC_50_CO',  type:'Chooser',     strike:50,   barrier:null, chooseStep:56,   expirySteps:84, bid:22.2,   ask:22.3,   maxVol:50  },
+  { id:10, name:'AC_40_BP',  type:'BinaryPut',   strike:40,   barrier:null, chooseStep:null, expirySteps:84, bid:5.0,    ask:5.1,    maxVol:50  },
+  { id:11, name:'AC_45_KO',  type:'KnockOutPut', strike:45,   barrier:45,   chooseStep:null, expirySteps:84, bid:0.15,   ask:0.175,  maxVol:500 },
+];
+ 
+const TOOLTIPS = {
+  'Underlying':  'Direct exposure to AC spot price. Buys/sells the underlying asset.',
+  'Call':        'Pays max(S−K, 0) at expiry. Profits when price finishes above strike.',
+  'Put':         'Pays max(K−S, 0) at expiry. Profits when price finishes below strike.',
+  'BinaryPut':   'Pays fixed 10 if S < K at expiry, else 0. All-or-nothing payoff.',
+  'KnockOutPut': 'Pays like a put UNLESS price ever dips below barrier — then worthless immediately.',
+  'Chooser':     'At week 2 (step 56), holder picks call or put based on BS values. Runs 1 more week.',
+};
+ 
+const TYPE_CLASS = {
+  'Underlying':  'type-under',
+  'Call':        'type-vanilla',
+  'Put':         'type-vanilla',
+  'BinaryPut':   'type-exotic',
+  'KnockOutPut': 'type-exotic',
+  'Chooser':     'type-exotic',
+};
+ 
+const EXPIRY_LABEL = {
+  56: 'T + 14',
+  84: 'T + 21',
+};
+ 
+// === UI STATE ===
+let positions = CONTRACTS.map(() => ({ side: 'none', volume: 0 }));
+let lastResults = null;
+let chartHist = null, chartPaths = null, chartBreak = null;
+let payoffCtx = null;
+ 
+// === PRESETS ===
+const PRESETS = {
+  blank:         () => CONTRACTS.map(() => ({ side:'none', volume:0 })),
+  chooser_arb:   () => CONTRACTS.map((c,i) => {
+    if (i===9)  return { side:'sell', volume:50 };
+    if (i===7)  return { side:'buy',  volume:50 };
+    if (i===8)  return { side:'buy',  volume:50 };
+    return { side:'none', volume:0 };
+  }),
+  bear_put:      () => CONTRACTS.map((c,i) => {
+    if (i===1)  return { side:'buy',  volume:50 };
+    if (i===5)  return { side:'sell', volume:50 };
+    return { side:'none', volume:0 };
+  }),
+  long_straddle: () => CONTRACTS.map((c,i) => {
+    if (i===1 || i===2) return { side:'buy', volume:50 };
+    return { side:'none', volume:0 };
+  }),
+  ko_spec:       () => CONTRACTS.map((c,i) => {
+    if (i===11) return { side:'buy', volume:500 };
+    return { side:'none', volume:0 };
+  }),
+  custom:        () => positions,
+};
+ 
+function applyPreset(key) {
+  if (key === 'custom') return;
+  positions = PRESETS[key]();
+  renderTable();
+  updatePayoffDiagram();
+}
+ 
+// === MATH UTILITIES ===
+function boxMuller() {
+  let u;
+  do { u = Math.random(); } while (u === 0);
+  const v = Math.random();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+ 
+function normCDF(x) {
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const sign = x < 0 ? -1 : 1;
+  const ax = Math.abs(x);
+  const t = 1/(1+p*ax);
+  const y = 1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-ax*ax);
+  return 0.5*(1+sign*y);
+}
+ 
+function bsCall(S, K, T, sigma) {
+  if (T <= 0 || S <= 0) return Math.max(S - K, 0);
+  const sqT = Math.sqrt(T);
+  const d1 = (Math.log(S/K) + 0.5*sigma*sigma*T) / (sigma*sqT);
+  const d2 = d1 - sigma*sqT;
+  return S*normCDF(d1) - K*normCDF(d2);
+}
+ 
+function bsPut(S, K, T, sigma) {
+  if (T <= 0 || S <= 0) return Math.max(K - S, 0);
+  const sqT = Math.sqrt(T);
+  const d1 = (Math.log(S/K) + 0.5*sigma*sigma*T) / (sigma*sqT);
+  const d2 = d1 - sigma*sqT;
+  return K*normCDF(-d2) - S*normCDF(-d1);
+}
+ 
+// === PATH GENERATION ===
+function generatePath() {
+  const path = new Float64Array(T21_STEPS + 1);
+  path[0] = S0;
+  for (let i = 1; i <= T21_STEPS; i++) {
+    const z = boxMuller();
+    path[i] = path[i-1] * Math.exp((-0.5*SIGMA*SIGMA)*DT + SIGMA*Math.sqrt(DT)*z);
+  }
+  return path;
+}
+ 
+// === PAYOFF COMPUTATION ===
+function computePayoff(path, contract) {
+  const ST = path[contract.expirySteps];
+  switch(contract.type) {
+    case 'Underlying': return ST;
+    case 'Call': return Math.max(ST - contract.strike, 0);
+    case 'Put':  return Math.max(contract.strike - ST, 0);
+    case 'BinaryPut': return ST < contract.strike ? BINARY_NOTIONAL : 0;
+    case 'KnockOutPut':
+      for (let i = 0; i <= contract.expirySteps; i++) {
+        if (path[i] < contract.barrier) return 0;
+      }
+      return Math.max(contract.strike - ST, 0);
+    case 'Chooser': {
+      const Sc = path[contract.chooseStep];
+      const rem = (contract.expirySteps - contract.chooseStep) / STEPS_PER_YEAR;
+      return Math.max(bsCall(Sc, contract.strike, rem, SIGMA),
+                      bsPut(Sc,  contract.strike, rem, SIGMA));
+    }
+    default: return 0;
+  }
+}
+ 
+function computePortfolioPnL(path, pos) {
+  let total = 0;
+  for (let i = 0; i < CONTRACTS.length; i++) {
+    const p = pos[i];
+    if (p.side === 'none' || p.volume === 0) continue;
+    const c = CONTRACTS[i];
+    const payoff = computePayoff(path, c);
+    const entry = p.side === 'buy' ? c.ask : c.bid;
+    if (p.side === 'buy') {
+      total += (payoff - entry) * p.volume * CONTRACT_SIZE;
+    } else {
+      total += (entry - payoff) * p.volume * CONTRACT_SIZE;
+    }
+  }
+  return total;
+}
+ 
+function computeContractPnL(path, contractIdx, pos) {
+  const p = pos[contractIdx];
+  if (p.side === 'none' || p.volume === 0) return 0;
+  const c = CONTRACTS[contractIdx];
+  const payoff = computePayoff(path, c);
+  const entry = p.side === 'buy' ? c.ask : c.bid;
+  return p.side === 'buy'
+    ? (payoff - entry) * p.volume * CONTRACT_SIZE
+    : (entry - payoff) * p.volume * CONTRACT_SIZE;
+}
+ 
+// === SIMULATION ENGINE ===
+let simPnLs = null;
+let simContractPnLs = null;
+let simPaths = [];
+ 
+function runSimulation() {
+  const numSims = parseInt(document.getElementById('simSlider').value);
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ RUNNING';
+ 
+  const pw = document.getElementById('progressWrap');
+  pw.classList.add('active');
+ 
+  simPnLs = new Float64Array(numSims);
+  simContractPnLs = CONTRACTS.map(() => new Float64Array(numSims));
+  simPaths = [];
+ 
+  let done = 0;
+  const pos = positions.map(p => ({ ...p }));
+ 
+  function chunk() {
+    const end = Math.min(done + CHUNK_SIZE, numSims);
+    for (let s = done; s < end; s++) {
+      const path = generatePath();
+      simPnLs[s] = computePortfolioPnL(path, pos);
+      for (let ci = 0; ci < CONTRACTS.length; ci++) {
+        simContractPnLs[ci][s] = computeContractPnL(path, ci, pos);
+      }
+      if (simPaths.length < 30) simPaths.push(path);
+    }
+    done = end;
+    const pct = (done / numSims * 100).toFixed(0);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = `SIMULATING... ${pct}%`;
+ 
+    if (done < numSims) {
+      setTimeout(chunk, 0);
+    } else {
+      finishSimulation(numSims, pos);
+    }
+  }
+  setTimeout(chunk, 0);
+}
+ 
+function finishSimulation(numSims, pos) {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = false;
+  btn.textContent = '▶ RUN';
+  document.getElementById('progressWrap').classList.remove('active');
+  document.getElementById('exportBtn').disabled = false;
+ 
+  const stats = computeStats(simPnLs);
+  lastResults = { stats, numSims };
+ 
+  updateStatCards(stats, numSims);
+  updateExpPnLColumn(simContractPnLs, pos);
+  renderHistogram(simPnLs, stats, numSims);
+  renderPathsChart(simPaths);
+  renderBreakdownChart(simContractPnLs, pos);
+ 
+  document.querySelector('.stats-grid').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+ 
+// === STATISTICS ===
+function computeStats(pnls) {
+  const n = pnls.length;
+  let sum = 0;
+  for (let i = 0; i < n; i++) sum += pnls[i];
+  const mean = sum / n;
+ 
+  let varSum = 0;
+  for (let i = 0; i < n; i++) varSum += (pnls[i] - mean) ** 2;
+  const std = Math.sqrt(varSum / n);
+ 
+  const sorted = Float64Array.from(pnls).sort();
+  const median = n % 2 === 0
+    ? (sorted[n/2-1] + sorted[n/2]) / 2
+    : sorted[Math.floor(n/2)];
+  const p5  = sorted[Math.floor(n * 0.05)];
+  const p95 = sorted[Math.floor(n * 0.95)];
+ 
+  let profCount = 0;
+  for (let i = 0; i < n; i++) if (pnls[i] > 0) profCount++;
+ 
+  return { mean, std, median, p5, p95, sharpe: std > 0 ? mean/std : 0, profPct: profCount/n*100 };
+}
+ 
+function fmt(v) {
+  if (Math.abs(v) >= 1e6) return (v/1e6).toFixed(2) + 'M';
+  if (Math.abs(v) >= 1e3) return (v/1e3).toFixed(1) + 'K';
+  return v.toFixed(0);
+}
+ 
+function updateStatCards(s, n) {
+  const meanEl = document.getElementById('statMean');
+  meanEl.textContent = fmt(s.mean);
+  meanEl.className = 'stat-value ' + (s.mean >= 0 ? 'pnl-pos glow-text-green' : 'pnl-neg glow-text-red');
+  document.getElementById('statMeanSub').textContent = `Median: ${fmt(s.median)} | n=${n}`;
+ 
+  document.getElementById('statStd').textContent = fmt(s.std);
+  document.getElementById('statStdSub').textContent = `p5: ${fmt(s.p5)} | p95: ${fmt(s.p95)}`;
+ 
+  const shrEl = document.getElementById('statSharpe');
+  shrEl.textContent = s.sharpe.toFixed(3);
+  shrEl.className = 'stat-value ' + (s.sharpe >= 0 ? 'pnl-pos' : 'pnl-neg');
+  document.getElementById('statSharpeSub').textContent = 'mean / std dev (unitless)';
+ 
+  const prEl = document.getElementById('statProfit');
+  prEl.textContent = s.profPct.toFixed(1) + '%';
+  prEl.className = 'stat-value ' + (s.profPct >= 50 ? 'pnl-pos' : 'pnl-neg');
+  document.getElementById('statProfitSub').textContent = `${Math.round(s.profPct*n/100)} of ${n} simulations`;
+}
+ 
+function updateExpPnLColumn(contractPnLs, pos) {
+  for (let i = 0; i < CONTRACTS.length; i++) {
+    const el = document.getElementById(`expPnL_${i}`);
+    if (!el) continue;
+    if (pos[i].side === 'none' || pos[i].volume === 0) {
+      el.textContent = '—';
+      el.className = 'exp-pnl pnl-zero';
+      continue;
+    }
+    const arr = contractPnLs[i];
+    let sum = 0;
+    for (let j = 0; j < arr.length; j++) sum += arr[j];
+    const mean = sum / arr.length;
+    el.textContent = fmt(mean);
+    el.className = 'exp-pnl ' + (mean >= 0 ? 'pnl-pos' : 'pnl-neg');
+  }
+}
+ 
+// === CHART RENDERING ===
+const CHART_DEFAULTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { ticks: { color:'#8b949e', font:{ family:'Share Tech Mono', size:10 } }, grid: { color:'rgba(48,54,61,0.5)' }, border: { color:'#1e2936' } },
+    y: { ticks: { color:'#8b949e', font:{ family:'Share Tech Mono', size:10 } }, grid: { color:'rgba(48,54,61,0.5)' }, border: { color:'#1e2936' } },
+  }
+};
+ 
+function renderHistogram(pnls, stats, n) {
+  const NBINS = 40;
+  let minV = Infinity, maxV = -Infinity;
+  for (let i = 0; i < n; i++) {
+    if (pnls[i] < minV) minV = pnls[i];
+    if (pnls[i] > maxV) maxV = pnls[i];
+  }
+  const range = maxV - minV || 1;
+  const binW = range / NBINS;
+  const counts = new Array(NBINS).fill(0);
+  for (let i = 0; i < n; i++) {
+    let b = Math.floor((pnls[i] - minV) / binW);
+    if (b >= NBINS) b = NBINS - 1;
+    counts[b]++;
+  }
+  const labels = counts.map((_, i) => fmt(minV + (i+0.5)*binW));
+  const colors = counts.map((_, i) => {
+    const center = minV + (i+0.5)*binW;
+    return center >= 0 ? 'rgba(0,255,136,0.7)' : 'rgba(255,51,85,0.7)';
+  });
+ 
+  document.getElementById('emptyHist').style.display = 'none';
+  const canvas = document.getElementById('histChart');
+  canvas.style.display = 'block';
+ 
+  if (chartHist) chartHist.destroy();
+  chartHist = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: counts,
+        backgroundColor: colors,
+        borderWidth: 0,
+        barPercentage: 1,
+        categoryPercentage: 1,
+      }]
+    },
+    options: {
+      ...JSON.parse(JSON.stringify(CHART_DEFAULTS)),
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        annotation: {},
+        tooltip: {
+          callbacks: {
+            title: (items) => `PnL ≈ ${items[0].label}`,
+            label: (item) => `Count: ${item.raw} (${(item.raw/n*100).toFixed(1)}%)`,
+          },
+          bodyFont: { family:'Share Tech Mono' },
+          titleFont: { family:'Share Tech Mono' },
+          backgroundColor: '#1c2128',
+          borderColor: '#30363d',
+          borderWidth: 1,
+        }
+      },
+      scales: {
+        x: { ...CHART_DEFAULTS.scales.x, title: { display:true, text:'PnL', color:'#8b949e', font:{family:'Share Tech Mono',size:10} } },
+        y: { ...CHART_DEFAULTS.scales.y, title: { display:true, text:'COUNT', color:'#8b949e', font:{family:'Share Tech Mono',size:10} } },
+      }
+    }
+  });
+}
+ 
+function renderPathsChart(paths) {
+  document.getElementById('emptyPaths').style.display = 'none';
+  const canvas = document.getElementById('pathsChart');
+  canvas.style.display = 'block';
+ 
+  const labels = Array.from({length:T21_STEPS+1},(_,i)=>i%4===0?`D${i/4}`:'');
+  const datasets = paths.map(path => ({
+    data: Array.from(path),
+    borderColor: 'rgba(77,166,255,0.25)',
+    borderWidth: 1,
+    pointRadius: 0,
+    tension: 0,
+  }));
+ 
+  // Strike lines
+  const strikes = [
+    { K:35, color:'rgba(255,51,85,0.7)',   label:'K=35' },
+    { K:40, color:'rgba(255,140,0,0.7)',   label:'K=40' },
+    { K:45, color:'rgba(255,215,0,0.7)',   label:'K=45' },
+    { K:50, color:'rgba(230,237,243,0.7)', label:'K=50' },
+    { K:60, color:'rgba(77,166,255,0.7)',  label:'K=60' },
+  ];
+  strikes.forEach(s => {
+    datasets.push({
+      data: new Array(T21_STEPS+1).fill(s.K),
+      borderColor: s.color,
+      borderWidth: 1.5,
+      borderDash: [4,4],
+      pointRadius: 0,
+      label: s.label,
+    });
+  });
+ 
+  if (chartPaths) chartPaths.destroy();
+  chartPaths = new Chart(canvas, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      ...JSON.parse(JSON.stringify(CHART_DEFAULTS)),
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: {
+        legend: { display:true, labels:{ filter: item => item.text, color:'#8b949e', font:{family:'Share Tech Mono',size:9}, boxWidth:12 } },
+        tooltip: { enabled:false }
+      },
+      scales: {
+        x: { ...CHART_DEFAULTS.scales.x },
+        y: { ...CHART_DEFAULTS.scales.y, title:{display:true,text:'PRICE',color:'#8b949e',font:{family:'Share Tech Mono',size:10}} }
+      }
+    }
+  });
+}
+ 
+function renderBreakdownChart(contractPnLs, pos) {
+  const activeContracts = CONTRACTS.filter((c,i) => pos[i].side !== 'none' && pos[i].volume > 0);
+  if (activeContracts.length === 0) return;
+ 
+  document.getElementById('emptyBreak').style.display = 'none';
+  const canvas = document.getElementById('breakdownChart');
+  canvas.style.display = 'block';
+ 
+  const labels = activeContracts.map(c => c.name);
+  const means = activeContracts.map(c => {
+    const arr = contractPnLs[c.id];
+    let sum = 0;
+    for (let j = 0; j < arr.length; j++) sum += arr[j];
+    return sum / arr.length;
+  });
+  const colors = means.map(m => m >= 0 ? 'rgba(0,255,136,0.7)' : 'rgba(255,51,85,0.7)');
+ 
+  if (chartBreak) chartBreak.destroy();
+  chartBreak = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data:means, backgroundColor:colors, borderWidth:0 }]
+    },
+    options: {
+      ...JSON.parse(JSON.stringify(CHART_DEFAULTS)),
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display:false },
+        tooltip: {
+          callbacks: { label: item => ` ${fmt(item.raw)}` },
+          bodyFont:{family:'Share Tech Mono'},
+          backgroundColor:'#1c2128', borderColor:'#30363d', borderWidth:1
+        }
+      },
+      scales: {
+        x: { ...CHART_DEFAULTS.scales.x, title:{display:true,text:'MEAN PnL',color:'#8b949e',font:{family:'Share Tech Mono',size:10}} },
+        y: { ...CHART_DEFAULTS.scales.y, ticks:{...CHART_DEFAULTS.scales.y.ticks, font:{family:'Share Tech Mono',size:10}} }
+      }
+    }
+  });
+}
+ 
+// === PAYOFF DIAGRAM (analytical) ===
+function getAnalyticalPayoff(S, contractIdx, pos) {
+  const p = pos[contractIdx];
+  if (p.side === 'none' || p.volume === 0) return 0;
+  const c = CONTRACTS[contractIdx];
+  let payoff;
+  switch(c.type) {
+    case 'Underlying': payoff = S; break;
+    case 'Call': payoff = Math.max(S - c.strike, 0); break;
+    case 'Put':  payoff = Math.max(c.strike - S, 0); break;
+    case 'BinaryPut': payoff = S < c.strike ? BINARY_NOTIONAL : 0; break;
+    case 'KnockOutPut': payoff = 0; break; // hard to show analytically — show as 0 (knocked)
+    case 'Chooser': {
+      const rem = (c.expirySteps - c.chooseStep) / STEPS_PER_YEAR;
+      payoff = Math.max(bsCall(S, c.strike, rem, SIGMA), bsPut(S, c.strike, rem, SIGMA));
+      break;
+    }
+    default: payoff = 0;
+  }
+  const entry = p.side === 'buy' ? c.ask : c.bid;
+  if (c.type === 'Underlying') {
+    return p.side === 'buy'
+      ? (payoff - entry) * p.volume * CONTRACT_SIZE
+      : (entry - payoff) * p.volume * CONTRACT_SIZE;
+  }
+  return p.side === 'buy'
+    ? (payoff - entry) * p.volume * CONTRACT_SIZE
+    : (entry - payoff) * p.volume * CONTRACT_SIZE;
+}
+ 
+function updatePayoffDiagram() {
+  const canvas = document.getElementById('payoffCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || canvas.parentElement.offsetWidth;
+  const H = 140;
+  canvas.width = W;
+  canvas.height = H;
+  ctx.clearRect(0, 0, W, H);
+ 
+  const prices = [];
+  for (let s = 5; s <= 100; s += 1) prices.push(s);
+  const payoffs = prices.map(S => {
+    let total = 0;
+    for (let i = 0; i < CONTRACTS.length; i++) total += getAnalyticalPayoff(S, i, positions);
+    return total;
+  });
+ 
+  const minP = Math.min(...payoffs);
+  const maxP = Math.max(...payoffs);
+  const range = maxP - minP || 1;
+  const pad = 20;
+ 
+  const toX = (i) => pad + (i / (prices.length - 1)) * (W - 2*pad);
+  const toY = (v) => (H - pad) - ((v - minP) / range) * (H - 2*pad);
+ 
+  // Zero line
+  const y0 = toY(0);
+  ctx.strokeStyle = 'rgba(139,148,158,0.4)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(pad, y0);
+  ctx.lineTo(W - pad, y0);
+  ctx.stroke();
+  ctx.setLineDash([]);
+ 
+  // Payoff curve
+  ctx.strokeStyle = '#00ff88';
+  ctx.lineWidth = 2;
+  ctx.shadowColor = 'rgba(0,255,136,0.4)';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  payoffs.forEach((v, i) => {
+    const x = toX(i), y = toY(v);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+ 
+  // Fill
+  ctx.beginPath();
+  payoffs.forEach((v, i) => {
+    const x = toX(i), y = toY(v);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(toX(payoffs.length-1), y0);
+  ctx.lineTo(toX(0), y0);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(0,255,136,0.07)';
+  ctx.fill();
+ 
+  // Current price line
+  const s0idx = prices.indexOf(50);
+  if (s0idx >= 0) {
+    const xs0 = toX(s0idx);
+    ctx.strokeStyle = 'rgba(0,229,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    ctx.moveTo(xs0, pad);
+    ctx.lineTo(xs0, H - pad);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(0,229,255,0.8)';
+    ctx.font = '9px Share Tech Mono';
+    ctx.fillText('S₀', xs0 + 3, pad + 10);
+  }
+ 
+  // Axes labels
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '9px Share Tech Mono';
+  ctx.fillText('5', pad, H - 4);
+  ctx.fillText('100', W - pad - 20, H - 4);
+  ctx.fillText(fmt(maxP), pad + 2, pad + 10);
+  ctx.fillText(fmt(minP), pad + 2, H - pad - 4);
+}
+ 
+// === TABLE RENDERING ===
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  CONTRACTS.forEach((c, i) => {
+    const pos = positions[i];
+    const tr = document.createElement('tr');
+    tr.id = `row_${i}`;
+    tr.className = pos.side === 'buy' ? 'row-buy' : pos.side === 'sell' ? 'row-sell' : '';
+ 
+    const expiryLabel = EXPIRY_LABEL[c.expirySteps] || `T + ${c.expirySteps/4}`;
+    const typeClass = TYPE_CLASS[c.type] || 'type-vanilla';
+    const isExotic = ['BinaryPut','KnockOutPut','Chooser'].includes(c.type);
+    const tooltip = TOOLTIPS[c.type] || '';
+ 
+    tr.innerHTML = `
+      <td><span class="opt-name">${c.name}</span></td>
+      <td>
+        <div class="tooltip-wrap">
+          <span class="type-badge ${typeClass}">${isExotic?'✦ ':''}${c.type}</span>
+          <div class="tooltip-text">${tooltip}</div>
+        </div>
+      </td>
+      <td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-muted)">${c.expirySteps===84&&c.chooseStep?'T+14/21':expiryLabel}</td>
+      <td><span class="bid">${c.bid}</span></td>
+      <td><span class="ask">${c.ask}</span></td>
+      <td style="font-family:'Share Tech Mono',monospace;color:var(--text-muted)">${c.maxVol}</td>
+      <td>
+        <select class="side-select side-${pos.side}" onchange="setSide(${i},this.value,this)">
+          <option value="none"  ${pos.side==='none' ?'selected':''}>None</option>
+          <option value="buy"   ${pos.side==='buy'  ?'selected':''}>BUY</option>
+          <option value="sell"  ${pos.side==='sell' ?'selected':''}>SELL</option>
+        </select>
+      </td>
+      <td>
+        <input type="number" class="vol-input" min="0" max="${c.maxVol}" value="${pos.volume}"
+          onchange="setVolume(${i},this.value)" oninput="setVolume(${i},this.value)">
+      </td>
+      <td><span class="exp-pnl pnl-zero" id="expPnL_${i}">—</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+ 
+function setSide(i, val, selectEl) {
+  positions[i].side = val;
+  selectEl.className = `side-select side-${val}`;
+  const row = document.getElementById(`row_${i}`);
+  row.className = val === 'buy' ? 'row-buy' : val === 'sell' ? 'row-sell' : '';
+  document.getElementById('presetSelect').value = 'custom';
+  updatePayoffDiagram();
+}
+ 
+function setVolume(i, val) {
+  let v = parseInt(val) || 0;
+  const max = CONTRACTS[i].maxVol;
+  if (v < 0) v = 0;
+  if (v > max) v = max;
+  positions[i].volume = v;
+  document.getElementById('presetSelect').value = 'custom';
+  updatePayoffDiagram();
+}
+ 
+// === EXPORT ===
+function exportCSV() {
+  if (!simPnLs) return;
+  let csv = 'sim_index,portfolio_pnl\n';
+  for (let i = 0; i < simPnLs.length; i++) csv += `${i},${simPnLs[i].toFixed(2)}\n`;
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aether_crystal_sim.csv';
+  a.click();
+}
+ 
+// === MODAL ===
+function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+ 
+// === INITIALIZATION ===
+window.addEventListener('load', () => {
+  applyPreset('chooser_arb');
+  document.getElementById('presetSelect').value = 'chooser_arb';
+  setTimeout(updatePayoffDiagram, 100);
+});
+ 
+window.addEventListener('resize', updatePayoffDiagram);
+</script>
+</body>
+</html>
